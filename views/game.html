@@ -1,0 +1,12 @@
+<a ng-click="setGame('PSGOM')">PSGOM</a>
+<br>
+{{homeTeamShort}} - {{ awayTeamShort}}
+
+<button ng-click="getTrends()" type="button" class="btn btn-info">Get Trends</button>
+
+<div ng-show="loading">
+    Now loading
+</div>
+
+<li ng-repeat="trend in trends | unique : 'id'"> <i> {{ trend.text }} </i> par <b> {{ trend.user.name }}</b> le {{ trend.smallDate }}. <span ng-show="trend.retweet_count">Retweeté <b> {{ trend.retweet_count }} </b> fois. </span> </li>
+

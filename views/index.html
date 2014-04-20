@@ -1,0 +1,24 @@
+<ul class="list-unstyled">
+    <h4>{{ week }}e journée :</h4>
+    <div class="list-group">
+        <a href="#/game/{{ game.id }}" class="list-group-item" ng-repeat="game in games | orderBy:'-quotation'">
+            <div class="row">
+                <div class="col-xs-3">
+                    <span class="label label-default date">{{ game.date + 'T' + game.time + '+01:00'|date:'dd/MM HH:mm' }}</span>
+                </div>
+                <div class="col-xs-9">
+                    <div class="row">
+                        <div class="col-xs-9"><jersey model="game.home_team.jersey_model" main="game.home_team.main_color" secondary="game.home_team.secondary_color"></jersey>
+                            <span class="{{ game.home_team.id==currentTeam && 'bold' || ''}}">{{ game.home_team.team_name }}</span>
+                        </div>
+                        <div class="col-xs-3">{{ game.home_score != none ? game.home_score : '-' }}</div>
+                        <div class="col-xs-9"><jersey model="game.away_team.jersey_model" main="game.away_team.main_color" secondary="game.away_team.secondary_color"></jersey>
+                            <span class="{{ game.away_team.id==currentTeam && 'bold' || ''}}">{{ game.away_team.team_name }}</span>
+                        </div>
+                        <div class="col-xs-3">{{ game.away_score != none ? game.away_score : '-' }}</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</ul>
