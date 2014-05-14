@@ -1,3 +1,12 @@
+<div>
+    <div style='display:inline-block; width:49%;'>
+        <a ng-show="weekId>1" href="#/{{ weekId - 1}}"  class = "glyphicon glyphicon-chevron-left" style='color:#333333'></a>
+    </div>
+    <div style='display:inline-block; width:49%; text-align:right;'>
+        <a ng-show="weekId<38" href="#/{{ weekId - (-1)}}" class = "glyphicon glyphicon-chevron-right" style='color:#333333'></a>
+    </div>
+</div
+
 <ul class="list-unstyled">
     <h4>{{ week }}e journée :</h4>
     <div class="list-group">
@@ -8,12 +17,12 @@
                 </div>
                 <div class="col-xs-9">
                     <div class="row">
-                        <div class="col-xs-9"><jersey model="game.home_team.jersey_model" main="game.home_team.main_color" secondary="game.home_team.secondary_color"></jersey>
-                            <span class="{{ game.home_team.id==currentTeam && 'bold' || ''}}">{{ game.home_team.team_name }}</span>
+                        <div class="col-xs-9">
+                            <font color={{game.home_team.main_color}}><span id="team-name">{{ game.home_team.team_name }}<span id="team-name"></font>
                         </div>
                         <div class="col-xs-3">{{ game.home_score != none ? game.home_score : '-' }}</div>
-                        <div class="col-xs-9"><jersey model="game.away_team.jersey_model" main="game.away_team.main_color" secondary="game.away_team.secondary_color"></jersey>
-                            <span class="{{ game.away_team.id==currentTeam && 'bold' || ''}}">{{ game.away_team.team_name }}</span>
+                        <div class="col-xs-9">
+                            <font color={{game.away_team.main_color}}><span id="team-name">{{ game.away_team.team_name }}</span></font>
                         </div>
                         <div class="col-xs-3">{{ game.away_score != none ? game.away_score : '-' }}</div>
                     </div>

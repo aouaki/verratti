@@ -26,10 +26,10 @@ angular.module('mainModule', [])
     $scope.clubShort["18"] = "FCL";
     $scope.clubShort["19"] = "SCB";
     $scope.clubShort["20"] = "SR";
+    $scope.weekId = ($routeParams.weekId==undefined) ? '' : ($routeParams.weekId);
 
-    var loadedWeek = loadWeek($scope, $routeParams, $http, 'current', $q);
+    var loadedWeek = loadWeek($scope, $routeParams, $http, $routeParams.weekId, $q);
     loadedWeek.then(function(week) {
-        console.log(week);
         $scope.games = week.games;
         $scope.week = week.week;
     })
@@ -38,8 +38,8 @@ angular.module('mainModule', [])
 
 function loadWeek ($scope, $routeParams, $http, weekNumber, $q) {
     var deferred = $q.defer();
-    var weekQuery = (weekNumber=='current') ? 'current_week' : ('week=' + weekNumber);
-    var championshipId = ($routeParams.championshipId==undefined) ? '1' : ($routeParams.championshipId);
+    var weekQuery = (weekNumber==undefined) ? 'current_week' : ('week=' + weekNumber);
+    var championshipId = 1;
     var gameListUrl = ('http://apresmatch.fr/api/platini/game/?championship=' + championshipId + '&' + weekQuery);
     $http.get(gameListUrl).success(function (data) {
         var games = data.objects;
@@ -52,5 +52,3 @@ function loadWeek ($scope, $routeParams, $http, weekNumber, $q) {
     });
     return deferred.promise;
 }
-
-

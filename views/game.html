@@ -1,12 +1,27 @@
-<a ng-click="setGame('PSGOM')">PSGOM</a>
-<br>
-{{homeTeamShort}} - {{ awayTeamShort}}
+<h1><center><font color={{homeTeam.main_color}}><span id="team-name">{{homeTeamShort}}</span> </font> - <font color={{awayTeam.main_color}}><span id="team-name">{{ awayTeamShort}}</span></font></center></h1>
 
-<button ng-click="getTrends()" type="button" class="btn btn-info">Get Trends</button>
+<center><button ng-click="getTrends()" type="button" class="btn btn-info">Get Trends</button></center>
 
 <div ng-show="loading">
     Now loading
 </div>
+<br>
+<ul class="list-unstyled">
+    <div class="list-group">
+        <span class="list-group-item" ng-repeat="trend in trends | unique : 'id'">
+            <div class="row">
+                <div class="col-md-12" style='text-align: justified'>
 
-<li ng-repeat="trend in trends | unique : 'id'"> <i> {{ trend.text }} </i> par <b> {{ trend.user.name }}</b> le {{ trend.smallDate }}. <span ng-show="trend.retweet_count">Retweeté <b> {{ trend.retweet_count }} </b> fois. </span> </li>
+                    <i> {{ trend.text }} </i> <br> par <b> {{ trend.user.name }}</b> le {{ trend.smallDate }}. <span ng-show="trend.retweet_count">Retweeté <b> {{ trend.retweet_count }} </b> fois. </span>
 
+                </div>
+            </div>
+        </span>
+    </div>
+</ul>
+
+<div ng-show="loadingMore">
+    Now loading
+</div>
+
+<a ng-click="moreTweets()">Afficher plus de tweets</a>

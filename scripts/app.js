@@ -15,8 +15,8 @@ angular
         templateUrl: 'views/index.html',
         controller: 'MainCtrl'
       })
-      .when('/:championshipId', {
-        templateUrl: 'views/index.html',
+       .when('/:weekId', {
+        templateUrl : 'views/index.html',
         controller: 'MainCtrl'
       })
       .when('/game/:gameId', {
