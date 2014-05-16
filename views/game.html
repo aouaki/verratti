@@ -1,7 +1,10 @@
 <h1><center><font color={{homeTeam.main_color}}><span id="team-name">{{homeTeamShort}}</span> </font> - <font color={{awayTeam.main_color}}><span id="team-name">{{ awayTeamShort}}</span></font></center></h1>
 
-<center><button ng-click="getTrends()" type="button" class="btn btn-info">Get Trends</button></center>
-
+<center><button ng-click="voteFor(1)" type="button" class="btn btn-info">Vote</button></center>
+<button ng-click="changeView(0)" type="button" class="btn btn-info">Tweets</button>
+<button ng-click="changeView(1)" type="button" class="btn btn-info">Goals</button>
+<span ng-show="tab==0">
+<center><button ng-click="getTrends('tweets')" type="button" class="btn btn-info">Get Trends</button></center>
 <div ng-show="loading">
     Now loading
 </div>
@@ -24,4 +27,34 @@
     Now loading
 </div>
 
-<a ng-click="moreTweets()">Afficher plus de tweets</a>
+<a ng-click="moreTweets('tweets')">Afficher plus de tweets</a>
+</span>
+
+<span ng-show="tab==1">
+<center><button ng-click="getTrends('goals')" type="button" class="btn btn-info">Get Trends</button></center>
+<div ng-show="loading">
+    Now loading
+</div>
+<br>
+<ul class="list-unstyled">
+    <div class="list-group">
+        <span class="list-group-item" ng-repeat="trend in goalTrends | unique : 'id'">
+            <div class="row">
+                <div class="col-md-12" style='text-align: justified'>
+
+                    <i> {{ trend.text }} </i> <br> le {{ trend.smallDate }}.
+
+                </div>
+            </div>
+        </span>
+    </div>
+</ul>
+
+<div ng-show="loadingMore">
+    Now loading
+</div>
+
+<a ng-click="moreTweets('goals')">Afficher plus de tweets</a>
+</span>
+
+

@@ -5,6 +5,7 @@ angular.module('mainModule', [])
 .controller('MainCtrl', function($scope, $http, $routeParams, $location, $q) {
 
 
+    //Hardcode of hashtags for teams' ids
     $scope.clubShort = {};
     $scope.clubShort["1"] = "PSG";
     $scope.clubShort["2"] = "ACA";
@@ -26,8 +27,8 @@ angular.module('mainModule', [])
     $scope.clubShort["18"] = "FCL";
     $scope.clubShort["19"] = "SCB";
     $scope.clubShort["20"] = "SR";
-    $scope.weekId = ($routeParams.weekId==undefined) ? '' : ($routeParams.weekId);
 
+    //loading week's games when loading page
     var loadedWeek = loadWeek($scope, $routeParams, $http, $routeParams.weekId, $q);
     loadedWeek.then(function(week) {
         $scope.games = week.games;
@@ -36,6 +37,7 @@ angular.module('mainModule', [])
 
 });
 
+//function loading list of games for the week
 function loadWeek ($scope, $routeParams, $http, weekNumber, $q) {
     var deferred = $q.defer();
     var weekQuery = (weekNumber==undefined) ? 'current_week' : ('week=' + weekNumber);

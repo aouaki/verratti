@@ -4,9 +4,24 @@ angular.module('gameModule', [])
 
 .controller('GameCtrl', function($scope, $http, $routeParams, $location, $q) {
 
+    $scope.tab = 0;
+    
+    //Initializing websocket and functions for voting
+    var socket = io.connect('http://matuidi.herokuapp.com:80');
+
+    $scope.voteFor = function(choice){
+        socket.emit('vote', {vote : choice })
+    }
+
+    socket.on('votes', function(msg){
+        $scope.votes = msg.votes;
+        $scope.$apply();
+    });
+
     var gameUrl =('http://apresmatch.fr/api/platini/game/' + $routeParams.gameId);
     $scope.tweetNb = 10;
 
+    //Hardcode of team's short name
     $scope.clubShort = {};
     $scope.clubShort["1"] = "PSG";
     $scope.clubShort["2"] = "ACA";
@@ -30,6 +45,7 @@ angular.module('gameModule', [])
     $scope.clubShort["20"] = "SR";
     
 
+    //Gets JSON for the game
     $http.get(gameUrl).success(function (data) {
         $scope.awayTeam=data.away_team;
         $scope.homeTeam=data.home_team;
@@ -40,6 +56,7 @@ angular.module('gameModule', [])
         $scope.game = $scope.homeTeamShort + $scope.awayTeamShort;
     });
 
+    //Filter to replace some not working characters in the JSON. Will be used soon
     $scope.noAmp = function (trend) {
         var text = trend.text;
         text = text.replace('&amp;', '&').replace('&gt;', '>').replace('&lt;', '<');
@@ -48,31 +65,57 @@ angular.module('gameModule', [])
     }
 
 
-    $scope.getTrends = function() {
+    //gets the tweets for the loading of the view
+    $scope.getTrends = function(type) {
         $scope.loading = true;
-        var loadedTweets = loadTweets($scope, $http, $q);
+        var loadedTweets = loadTweets($scope, $http, $q, type);
         loadedTweets.then(function(tweetsLoaded){
             $scope.loading = false;
-            $scope.trends = [];
-            $scope.trends = $scope.trends.concat(tweetsLoaded.trends);
-            $scope.oldTweet = tweetsLoaded.oldTweet;
+            if (type=='tweets'){
+                $scope.trends = [];
+                $scope.trends = $scope.trends.concat(tweetsLoaded.trends);
+                $scope.oldTweet = tweetsLoaded.oldTweet;
+            }
+            if (type=='goals') {
+                $scope.goalTrends = [];
+                $scope.goalTrends = $scope.goalTrends.concat(tweetsLoaded.trends);
+                $scope.oldGoalTweet = tweetsLoaded.oldTweet;
+            }
         })
     }
 
-    $scope.moreTweets = function() {
+    //function to get more tweets than the ones currently loaded
+    $scope.moreTweets = function(type) {
         $scope.loadingMore = true;
-        var loadedTweets = loadTweets($scope, $http, $q);
+        var loadedTweets = loadTweets($scope, $http, $q, type);
         loadedTweets.then(function(tweetsLoaded){
-            $scope.loadingMore = false;
-            $scope.trends = $scope.trends.concat(tweetsLoaded.trends);
-            $scope.oldTweet = tweetsLoaded.oldTweet;
+            if (type=='tweets'){
+                $scope.loadingMore = false;
+                $scope.trends = $scope.trends.concat(tweetsLoaded.trends);
+                $scope.oldTweet = tweetsLoaded.oldTweet;
+            }
+            if (type=='goals'){
+                $scope.loadingMore = false;
+                $scope.goalTrends = $scope.trends.concat(tweetsLoaded.trends);
+                $scope.oldGoalTweet = tweetsLoaded.oldTweet;
+            }
         })
 
     }
 
+    //function to change view between goals and tweets
+    $scope.changeView = function() {
+        if ($scope.tab == 1){
+            $scope.tab = 0;
+        }
+        else {
+            $scope.tab = 1;
+        }
+    }
 })
 
 
+//filter to remove retweets
 .filter('unique', function() {
     return function(collection, keyname) {
         var output = [];
@@ -90,12 +133,21 @@ angular.module('gameModule', [])
     };
 });
 
-function loadTweets ($scope, $http, $q) {
+//function used for every Twitter query
+function loadTweets ($scope, $http, $q, type) {
     var deferred = $q.defer();
-    var tweetQuery = $scope.game + '/' + $scope.tweetNb + (typeof($scope.oldTweet)!=undefined?('/'+$scope.oldTweet):'');
-    var loadTweetsUrl = 'http://matuidi.herokuapp.com/api/tweets/' + tweetQuery;
+    if (type=='tweets'){
+        var tweetQuery = $scope.game + '/' + $scope.tweetNb + (typeof($scope.oldTweet)!=undefined?('/'+$scope.oldTweet):'');
+        var loadTweetsUrl = 'http://matuidi.herokuapp.com/api/tweets/' + tweetQuery;
+    }
+    if (type=='goals'){
+        var loadTweetsUrl = 'http://matuidi.herokuapp.com/api/goaltweets/';
+    }
     $http.get(loadTweetsUrl).success(function(data){
-        var trends = data.tweets.statuses;
+        var trends = data.tweets;
+        if (type=='tweets'){
+            trends = trends.statuses;
+        }
         for (var trend in trends) {
             var temp = trends[trend].retweeted_status;
             var rtId = trends[trend].id;
@@ -107,7 +159,6 @@ function loadTweets ($scope, $http, $q) {
             trends[trend].smallDate= date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear() + " à " + date.getHours() + ":" + (date.getMinutes()<10?'0':'') + date.getMinutes();
         }
         var trendsNb = trends.length;
-        console.log(trends);
         deferred.resolve({
         'trends' : trends,
         'oldTweet' : (typeof(trends[trendsNb-1])==undefined?'':trends[trendsNb-1].rtId)
