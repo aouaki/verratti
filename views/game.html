@@ -1,8 +1,16 @@
 <h1><center><font color={{homeTeam.main_color}}><span id="team-name">{{homeTeamShort}}</span> </font> - <font color={{awayTeam.main_color}}><span id="team-name">{{ awayTeamShort}}</span></font></center></h1>
 
-<center><button ng-click="voteFor(1)" type="button" class="btn btn-info">Vote</button></center>
 <button ng-click="changeView(0)" type="button" class="btn btn-info">Tweets</button>
 <button ng-click="changeView(1)" type="button" class="btn btn-info">Goals</button>
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="{{ votePercent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{votePercent}}%;">
+        {{votePercent}}%
+    </div>
+</div>
+<div class="row">
+    <div class="btn btn-primary col-xs-4" ng-click="voteFor(homeVote.choice)">+1</div>
+    <div class="btn btn-primary col-xs-4" ng-click="voteFor(awayVote.choice)">+1</div>
+</div>
 <span ng-show="tab==0">
 <center><button ng-click="getTrends('tweets')" type="button" class="btn btn-info">Get Trends</button></center>
 <div ng-show="loading">
@@ -11,7 +19,7 @@
 <br>
 <ul class="list-unstyled">
     <div class="list-group">
-        <span class="list-group-item" ng-repeat="trend in trends | unique : 'id'">
+        <span class="list-group-item" ng-repeat="trend in trends | unique : 'id' | orderBy : predicate">
             <div class="row">
                 <div class="col-md-12" style='text-align: justified'>
 
@@ -56,5 +64,3 @@
 
 <a ng-click="moreTweets('goals')">Afficher plus de tweets</a>
 </span>
-
-

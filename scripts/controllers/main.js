@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('mainModule', [])
+angular.module('mainModule', ['ui.bootstrap'])
 
 .controller('MainCtrl', function($scope, $http, $routeParams, $location, $q) {
 
